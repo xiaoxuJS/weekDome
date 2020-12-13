@@ -4,51 +4,44 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import axios from 'axios';
 import { baseUrl } from '../../../../server/http.js'
 import {
-  VoteListDetailPageImg
+    ReviewPdfPageImg
 } from './style';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-function VotoList({ isModalVisible, handleShowProgectPDF, oneData }) {
+function ReviewPdf({ reviewPdfShow, handleReviewPdfShow }) {
   const [urlPdf, setUrlPdf] = useState(null);
   const [numPages, setNumPages] = useState(null);
   const handleCancel = () => {
-    handleShowProgectPDF(false);
+    handleReviewPdfShow(false);
   };
   function onDocumentLoadSuccess({ numPages }) {
     setNumPages(numPages);
   }
   useEffect(() => {
-    if (oneData) {
-      axios({
-        url: baseUrl + `/review/project/preview?projectId=${oneData.id || oneData.projectId }`,
-        method: "get",
-        responseType: "blob",
-      }).then((res) => {
-        let blob = new Blob([res.data], {
-          type: res.data.type
-        })
-        setUrlPdf(blob);
-      })
-    }
-  }, [oneData]);
+    //   axios({
+    //     url: baseUrl + `/review/project/preview?projectId=${oneData.id}`,
+    //     method: "get",
+    //     responseType: "blob",
+    //   }).then((res) => {
+    //     let blob = new Blob([res.data], {
+    //       type: res.data.type
+    //     })
+    //     setUrlPdf(blob);
+    //   })
+  }, []);
 
   return (
     <Fragment>
-      {
-        oneData ? <Modal
-          title={oneData.name || oneData.projectName}
-          visible={isModalVisible}
+      <Modal
+          title='评审办法'
+          visible={reviewPdfShow}
           onCancel={handleCancel}
           footer={null}
           width={800}
           destroyOnClose = {true}
         >
-          <Row>
-            <Col span={12}>项目负责人: {oneData.leader}</Col>
-            <Col span={12}>单位: {oneData.department}</Col>
-          </Row>
-          <VoteListDetailPageImg>
+          <ReviewPdfPageImg>
             <Document
               file={urlPdf}
               onLoadSuccess={onDocumentLoadSuccess}
@@ -65,11 +58,10 @@ function VotoList({ isModalVisible, handleShowProgectPDF, oneData }) {
                 })
               }
             </Document>
-          </VoteListDetailPageImg>
-        </Modal> : <div></div>
-      }
+          </ReviewPdfPageImg>
+        </Modal>
     </Fragment>
   )
 }
 
-export default VotoList;
+export default ReviewPdf;

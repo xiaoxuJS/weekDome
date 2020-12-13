@@ -3,7 +3,7 @@ import Axios from "axios";
 let baseUrl = "";
 let ip = "";
 if (process.env.NODE_ENV === "development") {
-  ip = "10.4.55.240:8081"; //服务器
+  ip = "140.143.132.156:81/hw";
   baseUrl = "http://" + ip;
 } else if (process.env.NODE_ENV === "production") {
   ip = "140.143.132.156:81/hw";

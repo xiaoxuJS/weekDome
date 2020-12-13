@@ -2,83 +2,104 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Row, Col, Table, Space, Button, PageHeader, message } from 'antd';
 import {useHistory} from 'react-router-dom';
 import { getProject, postVote } from '../../server/indexAPI';
+//组件
 import VoteListDetail from './componets/VoteListDetail';
+import ReviewPdf from './componets/ReviewPdf';
 import {
-  ListPage
+  SnippetsOutlined
+} from '@ant-design/icons';
+import {
+  ListPage,
+  ListPageBottomButton
 } from './style.js';
 
 function List() {
   const history = new useHistory();
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [reviewPdfShow, setReviewPdfShow] = useState(false);
   const [name, setName] = useState('');
   const [data, setData] = useState([]);
   const [oneData, setOneData ] = useState( null );
   const columns = [
     {
-      title: '编号',
-      render: (text, record, index) => <span>{index + 1}</span>
+      title: '材料编号',
+      dataIndex: 'projectKey'
     },
     {
       title: '项目名称',
       dataIndex: 'name',
     },
-    {
-      title: '负责人',
-      dataIndex: 'leader',
-    },
-    {
-      title: '单位',
-      dataIndex: 'department',
-    },
-    {
-      title: '主审专家',
-      dataIndex: 'expert',
-    },
-    {
-      title: '投票结果',
-      dataIndex: 'voteType', //当前专家投票结果，0待定，1通过，-1不通过
-      render: text => {
-        if(text === 0) {
-          return <span style = {{'color':'#FAAD14'}}>待定</span>
-        }else if(text === 1 ) {
-          return <span style = {{'color':'#52C41A'}}>通过</span>
-        }else if(text === -1 ) {
-          return <span style = {{'color':'#FF4D4F'}}>不通过</span>
-        }
-      }
-    },
+    // {
+    //   title: '负责人',
+    //   dataIndex: 'leader',
+    // },
+    // {
+    //   title: '单位',
+    //   dataIndex: 'department',
+    // },
+    // {
+    //   title: '主审专家',
+    //   dataIndex: 'expert',
+    // },
+    // {
+    //   title: '投票结果',
+    //   dataIndex: 'voteType', //当前专家投票结果，0待定，1通过，-1不通过
+    //   render: text => {
+    //     if(text === 0) {
+    //       return <span style = {{'color':'#FAAD14'}}>待定</span>
+    //     }else if(text === 1 ) {
+    //       return <span style = {{'color':'#52C41A'}}>通过</span>
+    //     }else if(text === -1 ) {
+    //       return <span style = {{'color':'#FF4D4F'}}>不通过</span>
+    //     }
+    //   }
+    // },
     {
       title: '操作',
       render: (text, record) => (
         <Space>
           <Button 
             size='large' 
-            type="primary" 
+            type= { record.voteType === 1 ? 'primary' : 'default'} 
             onClick = {() => handleSpecialistVote(record.id, 1)}
           >
-            通过
+            同意
           </Button>
           <Button 
-            size='large' 
+            size='large'
+            type= { record.voteType === -1 ? 'primary' : 'default'}
+            onClick = {() => handleSpecialistVote(record.id, -1)}
+          >
+            不同意
+          </Button>
+          <Button 
+            size='large'
+            type= { record.voteType === 0 ? 'primary' : 'default'} 
             onClick = {() => handleSpecialistVote(record.id, 0)}
           >
             待定
           </Button>
           <Button 
-            size='large' 
-            type="primary" 
-            danger 
-            onClick = {() => handleSpecialistVote(record.id, -1)}
-          >
-            未通过
-          </Button>
-          <Button
             size='large'
-            type="link"
+            type="default"
+            icon={<SnippetsOutlined  />}
             onClick={() => handleShowProgectPDF(true, record)}
           >
-            查看
+            查看详情
           </Button>
+          {/* 
+          <SnippetsOutlined 
+
+            onClick={() => handleShowProgectPDF(true, record)}
+            style = {{fontSize: '16px', color: '#3E91F7'}}
+          /> */}
+          {/* <Button
+            size='large'
+            type="link"
+            
+          >
+            查看
+          </Button> */}
         </Space>
       ),
     },
@@ -101,6 +122,11 @@ function List() {
   const handleShowProgectPDF = (show, record) => {
     setIsModalVisible(show)
     setOneData(record)
+  }
+  //
+  const handleReviewPdfShow = (show) => {
+    console.log('ddd')
+    setReviewPdfShow(show)
   }
   //保存推出
   const handleSaveOut = () => {
@@ -131,8 +157,17 @@ function List() {
             ghost={false}
             title= '黄委基础创新团队评审系统'
             extra={[
-              <Button key="2" type="link">{name}</Button>,
-              <Button key="1" type="primary" onClick = {handleSaveOut}>
+              <Button key="3" type="link">{name}</Button>,
+              <Button 
+                key="2" 
+                type="primary"
+                onClick = {() => handleReviewPdfShow(true)}
+              >评审办法</Button>,
+              <Button 
+                key="1" 
+                type="primary" 
+                onClick = {handleSaveOut}
+              >
                 提交并退出
               </Button>,
             ]}
@@ -144,6 +179,11 @@ function List() {
             pagination={false}
             rowKey='id'
           />
+          <ListPageBottomButton>
+            <Button key="1" type="primary" onClick = {handleSaveOut}>
+              提交并退出
+            </Button>
+          </ListPageBottomButton>
         </Col>
       </Row>
       <VoteListDetail 
@@ -151,6 +191,10 @@ function List() {
         handleShowProgectPDF={handleShowProgectPDF}
         oneData = {oneData}
 
+      />
+      <ReviewPdf 
+        reviewPdfShow={reviewPdfShow} 
+        handleReviewPdfShow={handleReviewPdfShow}
       />
     </ListPage>
   )
