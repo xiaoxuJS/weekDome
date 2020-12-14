@@ -41,7 +41,6 @@ const http = (url, method, args = {}) => {
         resolve(response.data);
       })
       .catch((error) => {
-        console.dir(error);
         reject(error);
       });
   });

@@ -125,7 +125,6 @@ function List() {
   }
   //
   const handleReviewPdfShow = (show) => {
-    console.log('ddd')
     setReviewPdfShow(show)
   }
   //保存推出
@@ -157,7 +156,6 @@ function List() {
             ghost={false}
             title= '黄委基础创新团队评审系统'
             extra={[
-              <Button key="3" type="link">{name}</Button>,
               <Button 
                 key="2" 
                 type="primary"

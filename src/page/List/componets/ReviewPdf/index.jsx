@@ -19,16 +19,16 @@ function ReviewPdf({ reviewPdfShow, handleReviewPdfShow }) {
     setNumPages(numPages);
   }
   useEffect(() => {
-    //   axios({
-    //     url: baseUrl + `/review/project/preview?projectId=${oneData.id}`,
-    //     method: "get",
-    //     responseType: "blob",
-    //   }).then((res) => {
-    //     let blob = new Blob([res.data], {
-    //       type: res.data.type
-    //     })
-    //     setUrlPdf(blob);
-    //   })
+      axios({
+        url: baseUrl + '/review/project/method',
+        method: "get",
+        responseType: "blob",
+      }).then((res) => {
+        let blob = new Blob([res.data], {
+          type: res.data.type
+        })
+        setUrlPdf(blob);
+      })
   }, []);
 
   return (
